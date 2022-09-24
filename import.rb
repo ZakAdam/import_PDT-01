@@ -15,10 +15,9 @@ DATABASE = Sequel.connect(adapter: :postgres,
                     #logger: Logger.new('log/db.log'))
 
 create_tables(DATABASE)
-                    #create_smaller_author_files
+#create_smaller_author_files
 
-                    #=begin
-
+=begin
 i = 0
 array_of_authors = []
 File.open("/home/adam/Downloads/autori_2.jsonl", 'r') do |file|
@@ -43,6 +42,6 @@ File.open("/home/adam/Downloads/autori_2.jsonl", 'r') do |file|
     end
   end
 end
-                    #=end
+=end
 
 puts "lol"
