@@ -13,9 +13,9 @@ def create_tables(database)
 
   database.create_table? :conversations do
     primary_key :id, type: :Bignum
-    foreign_key :author_id, :authors, type: Bignum
+    foreign_key :author_id, :authors, type: :Bignum
     String :content, text: true
-    FalseClass :possibly_sensitive
+    FalseClass :possible_sensitive
     String :language, size: 3
     String :source, text: true
     Integer :retweet_count, null: false
