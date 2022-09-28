@@ -1,4 +1,16 @@
 def create_tables(database)
+  database.create_table? :authors2 do
+    primary_key :id, type: :Bignum, null: false
+    String :original_id
+    String :name, null: false
+    String :username, null: false
+    String :description, text: true, null: false
+    Integer :followers_count, null: false
+    Integer :following_count, null: false
+    Integer :tweet_count, null: false
+    Integer :listed_count, null: false
+  end
+
   database.create_table? :authors do
      primary_key :id, type: :Bignum, null: false
      String :name, null: false

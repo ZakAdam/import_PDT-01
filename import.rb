@@ -1,6 +1,6 @@
 require 'sequel'
 require 'dotenv'
-#require 'logger'
+require 'logger'
 require 'set'
 require 'objspace'
 require 'zlib'
@@ -17,20 +17,20 @@ DATABASE = Sequel.connect(adapter: :postgres,
                     host: ENV.fetch("POSTGRES_HOST"),
                     port: ENV.fetch("POSTGRES_PORT"),
                     database: ENV.fetch("POSTGRES_DB"),
-                    max_connections: 10)
-                          #logger: Logger.new('log/db.log'))
+                    max_connections: 10,
+                          logger: Logger.new('log/db.log'))
 
 create_tables(DATABASE)
-
-#load 'test.rb'
-#test_upsert(DATABASE)
-
 
 #create_smaller_author_files
 
 #=begin
-filepath = '/home/adam/Downloads/authors.jsonl.gz'
+filepath = 'authors.jsonl.gz'
 batch_size = 100000
+
+load 'test.rb'
+test_authors_nil(DATABASE, filepath, batch_size)
+exit
 
 array_of_authors = []
 
@@ -45,7 +45,7 @@ Zlib::GzipReader.open(filepath) do |file|
       parsed_line = JSON.parse(line.gsub('\u0000', ''))
 
 
-      array_of_authors << {id: parsed_line['id'],
+      array_of_authors << {id: parsed_line['id'],               # 5500125
                            name: parsed_line['name'],
                            username: parsed_line['username'],
                            description: parsed_line['description'],
