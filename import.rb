@@ -86,6 +86,7 @@ existing_entities = Set[]
 conversation_hashtags = []
 new_hashtags = []
 existing_hashtags = {}
+last_hashtag_id = 1
 rows = 0
 
 author_ids = DATABASE[:authors].select(:id).map{|e| e[:id]}.to_set
@@ -165,22 +166,52 @@ Zlib::GzipReader.zcat(File.open(filepath)) do |line|
     end
   end
 
+  if parsed_line.dig('entities', 'hashtags')
+    parsed_line.dig('entities', 'hashtags').each do |hashtag|
+      if existing_hashtags.key?(hashtag['tag'])
+        conversation_hashtags << {conversation_id: parsed_line['id'],
+                                  hashtag_id: existing_hashtags[hashtag['tag']]}
+      else
+        new_hashtags << {id: last_hashtag_id,
+                         tag: hashtag['tag']}
+        existing_hashtags["#{hashtag['tag']}"] = last_hashtag_id
+
+        conversation_hashtags << {conversation_id: parsed_line['id'],
+                                  hashtag_id: last_hashtag_id]}
+
+        last_hashtag_id += 1
+      end
+    end
+  end
+
   existing_conversations << parsed_line['id']
 
   rows += 1
 
   if rows % batch_size == 0
-    DATABASE[:authors].insert_conflict(:target=>:id).multi_insert(array_of_null_authors)        # TODO odstran upsert!!!
-    DATABASE[:conversations].insert_conflict(:target=>:id).multi_insert(array_of_conversations)
+    DATABASE[:authors].multi_insert(array_of_null_authors)        # TODO odstran upsert!!!
+    DATABASE[:conversations].multi_insert(array_of_conversations)
     DATABASE[:links].multi_insert(links)
-    #DATABASE[:conversation_references].multi_insert(referenced_tweets)
+    DATABASE[:hashtags].multi_insert(new_hashtags)
+    DATABASE[:conversation_hashtags].multi_insert(conversation_hashtags)
     DATABASE[:annotations].multi_insert(annotations)
+    DATABASE[:context_domains].multi_insert(context_domain)
+    DATABASE[:context_entities].multi_insert(context_entity)
+    DATABASE[:context_annotations].multi_insert(context_annotations)
+
+    #DATABASE[:conversation_references].multi_insert(referenced_tweets)
     puts "#{batch_number} - #{array_of_conversations.size}"
     array_of_conversations = []
     array_of_null_authors = []
     links = []
-    referenced_tweets = []
     annotations = []
+    new_hashtags = []
+    conversation_hashtags = []
+    context_domain = []
+    context_entity = []
+    context_annotations = []
+    #referenced_tweets = []
+
     batch_number += 1
 
     #exit if batch_size == 4
@@ -188,17 +219,29 @@ Zlib::GzipReader.zcat(File.open(filepath)) do |line|
 end
 
 
-DATABASE[:authors].multi_insert(array_of_null_authors)
-DATABASE[:conversations].insert_conflict(:target=>:id).multi_insert(array_of_conversations)
+DATABASE[:authors].multi_insert(array_of_null_authors)        # TODO odstran upsert!!!
+DATABASE[:conversations].multi_insert(array_of_conversations)
 DATABASE[:links].multi_insert(links)
-DATABASE[:conversation_references].multi_insert(referenced_tweets)
+DATABASE[:hashtags].multi_insert(new_hashtags)
+DATABASE[:conversation_hashtags].multi_insert(conversation_hashtags)
 DATABASE[:annotations].multi_insert(annotations)
+DATABASE[:context_domains].multi_insert(context_domain)
+DATABASE[:context_entities].multi_insert(context_entity)
+DATABASE[:context_annotations].multi_insert(context_annotations)
+
+#DATABASE[:conversation_references].multi_insert(referenced_tweets)
 puts "#{batch_number} - #{array_of_conversations.size}"
 array_of_conversations = []
 array_of_null_authors = []
 links = []
-referenced_tweets = []
 annotations = []
+new_hashtags = []
+conversation_hashtags = []
+context_domain = []
+context_entity = []
+context_annotations = []
+#referenced_tweets = []
+
 batch_number += 1
 
 =begin
