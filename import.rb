@@ -77,6 +77,12 @@ existing_conversations = Set[]
 referenced_tweets = []
 links = []
 annotations = []
+context_annotations = []
+context_domain = []
+existing_domains = Set[]
+context_entity = []
+existing_entities = Set[]
+
 conversation_hashtags = []
 new_hashtags = []
 existing_hashtags = {}
@@ -118,6 +124,7 @@ Zlib::GzipReader.zcat(File.open(filepath)) do |line|
 
   if parsed_line.dig('entities', 'urls')
     parsed_line.dig('entities', 'urls').each do |url|
+      next if url['expanded_url'].size > 2048
       links << {conversation_id: parsed_line['id'],
                 url: url['expanded_url'],
                 title: url['title'],
@@ -131,6 +138,30 @@ Zlib::GzipReader.zcat(File.open(filepath)) do |line|
                 value: annotation['normalized_text'],
                 type: annotation['type'],
                 probability: annotation['probability']}
+    end
+  end
+
+  if parsed_line.key?('context_annotations')
+    parsed_line['context_annotations'].each do |c_annotation|
+      unless existing_domains.include?(c_annotation['domain']['id'])
+        context_domain << {id: c_annotation['domain']['id'],
+                           name: c_annotation['domain']['name'],
+                           description: c_annotation['domain']['description']}
+
+        existing_domains << c_annotation['domain']['id']
+      end
+
+      unless existing_entities.include?(c_annotation['entity']['id'])
+        context_entity << {id: c_annotation['entity']['id'],
+                             name: c_annotation['entity']['name'],
+                             description: c_annotation['entity']['description']}
+
+        existing_entities << c_annotation['entity']['id']
+      end
+
+      context_annotations << {conversation_id: parsed_line['id'],
+                              context_domain_id: c_annotation['domain']['id'],
+                              context_entity_id: c_annotation['entity']['id']}
     end
   end
 
@@ -216,4 +247,4 @@ puts Time.now
 puts "lol"
 
 
-# Start je: 2022-09-30 19:15:41 +0200
+# 2022-09-30 22:23:39 +0200
