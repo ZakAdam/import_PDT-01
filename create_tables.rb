@@ -39,7 +39,7 @@ def create_tables(database)
 
   database.create_table? :hashtags do
     primary_key :id, type: :Bignum, null: false
-    String :text, text: true, unique: true, null: false
+    String :tag, text: true, unique: true, null: false
   end
 
 
