@@ -8,26 +8,23 @@ require 'json'
 
 def create_smaller_author_files
   filepath = '/home/adam/Downloads/authors.jsonl.gz'
-  batch_size = 10000
+  batch_size = 100000
   i = 0
 
   Zlib::GzipReader.open(filepath) do |file|
     file.lazy.each_slice(batch_size) do |lines|
       # do something with batch of lines
 
-      puts lines.size
-      puts lines.class
-      puts lines.first
       File.open("/home/adam/Downloads/autori_#{i}.jsonl", 'w') do |f|
         lines.each do |line|
           f.write(line)
         end
       end
       i += 1
-      if i == 1
-        puts 'Endujem sa :)'
-        return
-      end
+      #if i == 1
+      #  puts 'Endujem sa :)'
+      #  return
+      #end
     end
   end
 end

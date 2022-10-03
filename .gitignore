@@ -2,3 +2,6 @@
 
 .idea
 .idea*
+.gz
+.jsonl
+log/
