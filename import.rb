@@ -6,7 +6,8 @@ require 'json'
 require 'csv'
 load 'create_tables.rb'
 load 'authors_import.rb'
-load 'import_references.rb'
+load 'references_import.rb'
+load 'conversation_import.rb'
 
 Dotenv.load
 
@@ -24,13 +25,15 @@ def seconds_to_hms(sec)
   "%02d:%02d" % [sec / 60, sec % 60]
 end
 
+puts "Start je: #{Time.now}"
+
 start_time = Time.now
 csv_array = []
 
 create_tables(DATABASE)
-                          #authors_import(csv_array ,start_time)
-
-puts "Start je: #{start_time}"
+authors_import(csv_array ,start_time)
+conversations_import(csv_array, start_time)
+references_import(csv_array, start_time)  # 9.7 RAM - one run
 
 =begin
 
@@ -239,9 +242,7 @@ context_annotations.clear
 
 =end
 
-references_import(csv_array, start_time)  # 9.7 RAM - one run
-
-CSV.open("pdt_adam-zak-references.csv", "w") do |csv|
+CSV.open("pdt_adam-zak_v2.csv", "w") do |csv|
   csv_array.each do |time|
     csv << time
   end
