@@ -9,8 +9,6 @@ def authors_import(csv_array, start_time)
   filepath = 'authors.jsonl.gz'
   rows = 0
 
-  #author_ids = DATABASE[:authors].select(:id).map{|e| "#{e[:id]}"}.to_set
-
   array_of_authors = []
 
   Zlib::GzipReader.zcat(File.open(filepath)) do |line|
@@ -39,13 +37,6 @@ def authors_import(csv_array, start_time)
   end
   DATABASE[:authors].insert_conflict.multi_insert(array_of_authors)
   csv_array << [Time.now.strftime('%Y-%m-%dT%H:%M%z'), seconds_to_hms(Time.now - start_time), seconds_to_hms(Time.now - batch_time)]
-  array_of_conversations = []
+  array_of_authors = []
   puts "End je: #{Time.now}"
-
-  CSV.open("pdt_references.csv", "w") do |csv|
-    #csv << headers
-    csv_array.each do |time|
-      csv << time
-    end
-  end
 end

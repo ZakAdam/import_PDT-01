@@ -1,8 +1,6 @@
 require 'sequel'
 require 'dotenv'
-require 'logger'
 require 'set'
-require 'objspace'
 require 'zlib'
 require 'json'
 require 'csv'
@@ -30,7 +28,7 @@ start_time = Time.now
 csv_array = []
 
 create_tables(DATABASE)
-#authors_import(csv_array ,start_time)
+                          #authors_import(csv_array ,start_time)
 
 puts "Start je: #{start_time}"
 
@@ -75,6 +73,7 @@ puts "End je: #{Time.now}"
 exit
 =end
 
+=begin
 puts Time.now
 batch_size = 100000
 batch_number = 0
@@ -198,27 +197,23 @@ Zlib::GzipReader.zcat(File.open(filepath)) do |line|
     DATABASE[:context_entities].multi_insert(context_entity)
     DATABASE[:context_annotations].multi_insert(context_annotations)
 
-    #DATABASE[:conversation_references].multi_insert(referenced_tweets)
     puts "#{batch_number} - #{array_of_conversations.size}"
-    array_of_conversations = []
-    array_of_null_authors = []
-    links = []
-    annotations = []
-    new_hashtags = []
-    conversation_hashtags = []
-    context_domain = []
-    context_entity = []
-    context_annotations = []
-    #referenced_tweets = []
+    array_of_conversations.clear
+    array_of_null_authors.clear
+    links.clear
+    annotations.clear
+    new_hashtags.clear
+    conversation_hashtags.clear
+    context_domain.clear
+    context_entity.clear
+    context_annotations.clear
 
     batch_number += 1
 
     csv_array << [Time.now.strftime('%Y-%m-%dT%H:%M%z'), seconds_to_hms(Time.now - start_time), seconds_to_hms(Time.now - batch_time)]
     batch_time = Time.now
-    #exit if batch_size == 4
   end
 end
-
 
 DATABASE[:authors].multi_insert(array_of_null_authors)
 DATABASE[:conversations].multi_insert(array_of_conversations)
@@ -230,30 +225,26 @@ DATABASE[:context_domains].multi_insert(context_domain)
 DATABASE[:context_entities].multi_insert(context_entity)
 DATABASE[:context_annotations].multi_insert(context_annotations)
 
-#DATABASE[:conversation_references].multi_insert(referenced_tweets)
 puts "#{batch_number} - #{array_of_conversations.size}"
 csv_array << [Time.now.strftime('%Y-%m-%dT%H:%M%z'), seconds_to_hms(Time.now - start_time), seconds_to_hms(Time.now - batch_time)]
-array_of_conversations = []
-array_of_null_authors = []
-links = []
-annotations = []
-new_hashtags = []
-conversation_hashtags = []
-context_domain = []
-context_entity = []
-context_annotations = []
-#referenced_tweets = []
+array_of_conversations.clear
+array_of_null_authors.clear
+links.clear
+annotations.clear
+new_hashtags.clear
+conversation_hashtags.clear
+context_domain.clear
+context_entity.clear
+context_annotations.clear
 
-batch_number += 1
+=end
 
-CSV.open("pdt_adam-zak.csv", "w") do |csv|
-  #csv << headers
+references_import(csv_array, start_time)  # 9.7 RAM - one run
+
+CSV.open("pdt_adam-zak-references.csv", "w") do |csv|
   csv_array.each do |time|
     csv << time
   end
 end
-
-
-#references_import(csv_array, start_time)
 
 puts "Import has ended :)"

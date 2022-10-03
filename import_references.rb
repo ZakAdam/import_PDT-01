@@ -5,7 +5,7 @@ require 'csv'
 
 # runtime = 1h 15m
 def references_import(csv_array, start_time)
-  puts Time.now
+  puts "References start je: #{Time.now}"
   batch_time = Time.now
   batch_size = 100000
   batch_number = 0
