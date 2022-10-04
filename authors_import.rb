@@ -28,7 +28,7 @@ def authors_import(csv_array, start_time)
     if rows % batch_size == 0
       DATABASE[:authors].insert_conflict(:target=>:id).multi_insert(array_of_authors)
       puts "#{batch_number} - #{array_of_authors.size}"
-      array_of_authors = []
+      array_of_authors.clear
       batch_number += 1
       csv_array << [Time.now.strftime('%Y-%m-%dT%H:%M%z'), seconds_to_hms(Time.now - start_time), seconds_to_hms(Time.now - batch_time)]
       batch_time = Time.now
@@ -37,6 +37,6 @@ def authors_import(csv_array, start_time)
   end
   DATABASE[:authors].insert_conflict.multi_insert(array_of_authors)
   csv_array << [Time.now.strftime('%Y-%m-%dT%H:%M%z'), seconds_to_hms(Time.now - start_time), seconds_to_hms(Time.now - batch_time)]
-  array_of_authors = []
+  array_of_authors.clear
   puts "End je: #{Time.now}"
 end
