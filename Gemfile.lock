@@ -1,17 +1,25 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    dotenv (2.8.0)
-    pg (1.4.1)
+    csv (3.2.2)
+    dotenv (2.8.1)
+    json (2.6.2)
+    pg (1.4.3)
     sequel (5.60.1)
+    set (1.0.2)
+    zlib (2.1.1)
 
 PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  csv
   dotenv
+  json
   pg
   sequel
+  set
+  zlib
 
 BUNDLED WITH
    2.3.12
