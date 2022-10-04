@@ -1,15 +1,8 @@
+# method, that goes over all tables and checks if they exist
+# if they exists, nothing happens
+# if table doesn't exist, then it is created
+# parameter database is reference to DATABASE from main (import.rb) files
 def create_tables(database)
-  database.create_table? :authors2 do
-    primary_key :id, type: :Bignum, null: false
-    String :name, null: false
-    String :username, null: false
-    String :description, text: true, null: false
-    Integer :followers_count, null: false
-    Integer :following_count, null: false
-    Integer :tweet_count, null: false
-    Integer :listed_count, null: false
-  end
-
   database.create_table? :authors do
      primary_key :id, type: :Bignum
      String :name
