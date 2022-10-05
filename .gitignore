@@ -1,7 +1,6 @@
 .env
+*.gz
+*.jsonl
+log/
 
 .idea
-.idea*
-.gz
-.jsonl
-log/
