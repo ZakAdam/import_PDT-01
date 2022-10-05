@@ -2,7 +2,10 @@
 
 source "https://rubygems.org"
 
-# gem "rails"
 gem 'sequel'
 gem 'dotenv'
 gem 'pg'
+gem 'zlib'
+gem 'json'
+gem 'csv'
+gem 'set'
